@@ -15,6 +15,7 @@ const TABS = ['Overview', 'SKILL.md', 'Preview', 'Install'];
 
 export default function SkillModal({ skill, onClose }) {
   const [tab, setTab] = useState('Overview');
+  const [code, setCode] = useState(skill.example_input || '');
   const color = CAT_COLOR[skill.category] || '#818cf8';
 
   useEffect(() => {
@@ -200,7 +201,7 @@ export default function SkillModal({ skill, onClose }) {
 
           {tab === 'Preview' && (
             <div style={{ animation: 'fadeUp 0.3s cubic-bezier(0.16,1,0.3,1) both' }}>
-              <BobPreview skill={skill} />
+              <BobPreview skill={skill} code={code} setCode={setCode} />
             </div>
           )}
 

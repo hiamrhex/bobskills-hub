@@ -1,14 +1,15 @@
 import { useState } from 'react';
+import { marked } from 'marked';
 import { BoltIcon, CopyIcon, CheckIcon } from './Icons';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
-export default function BobPreview({ skill }) {
-  const [code, setCode]       = useState(skill.example_input || '');
+export default function BobPreview({ skill, code, setCode }) {
   const [output, setOutput]   = useState('');
   const [loading, setLoading] = useState(false);
   const [copied, setCopied]   = useState(false);
   const [error, setError]     = useState(null);
+  const [viewMode, setViewMode] = useState('raw'); // 'raw' or 'rendered'
 
   const run = async () => {
     if (!code.trim()) return;
@@ -164,29 +165,88 @@ export default function BobPreview({ skill }) {
             <div style={{ fontSize: 10, fontFamily: 'var(--mono)', color: 'var(--text-3)', letterSpacing: '0.6px' }}>
               BOB'S OUTPUT
             </div>
-            <button onClick={copyOutput} style={{
-              display: 'flex', alignItems: 'center', gap: 5,
-              fontSize: 10.5, fontFamily: 'var(--mono)',
-              color: copied ? 'var(--cat-testing)' : 'var(--text-3)',
-              background: 'transparent', border: 'none',
-              cursor: 'pointer', transition: 'color 0.2s',
-              padding: '3px 6px', borderRadius: 5,
-            }}>
-              {copied ? <CheckIcon size={11} /> : <CopyIcon size={11} />}
-              {copied ? 'Copied!' : 'Copy'}
-            </button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              {/* View Mode Toggle */}
+              <div style={{
+                display: 'flex',
+                background: '#03030c',
+                border: '1px solid var(--border)',
+                borderRadius: 6,
+                padding: 2,
+              }}>
+                <button
+                  onClick={() => setViewMode('raw')}
+                  style={{
+                    fontSize: 10.5,
+                    fontFamily: 'var(--mono)',
+                    color: viewMode === 'raw' ? 'var(--text-1)' : 'var(--text-3)',
+                    background: viewMode === 'raw' ? 'var(--bg-surface)' : 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    padding: '4px 8px',
+                    borderRadius: 4,
+                  }}
+                >
+                  Raw
+                </button>
+                <button
+                  onClick={() => setViewMode('rendered')}
+                  style={{
+                    fontSize: 10.5,
+                    fontFamily: 'var(--mono)',
+                    color: viewMode === 'rendered' ? 'var(--text-1)' : 'var(--text-3)',
+                    background: viewMode === 'rendered' ? 'var(--bg-surface)' : 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    padding: '4px 8px',
+                    borderRadius: 4,
+                  }}
+                >
+                  Rendered
+                </button>
+              </div>
+              <button onClick={copyOutput} style={{
+                display: 'flex', alignItems: 'center', gap: 5,
+                fontSize: 10.5, fontFamily: 'var(--mono)',
+                color: copied ? 'var(--cat-testing)' : 'var(--text-3)',
+                background: 'transparent', border: 'none',
+                cursor: 'pointer', transition: 'color 0.2s',
+                padding: '3px 6px', borderRadius: 5,
+              }}>
+                {copied ? <CheckIcon size={11} /> : <CopyIcon size={11} />}
+                {copied ? 'Copied!' : 'Copy'}
+              </button>
+            </div>
           </div>
-          <pre style={{
-            background: '#03030c',
-            border: '1px solid var(--border)',
-            borderRadius: 10, padding: '1rem',
-            fontSize: 11.5, color: '#a5b4fc',
-            whiteSpace: 'pre-wrap',
-            fontFamily: 'var(--mono)',
-            lineHeight: 1.8, overflowX: 'auto',
-          }}>
-            {output}
-          </pre>
+          {viewMode === 'raw' ? (
+            <pre style={{
+              background: '#03030c',
+              border: '1px solid var(--border)',
+              borderRadius: 10, padding: '1rem',
+              fontSize: 11.5, color: '#a5b4fc',
+              whiteSpace: 'pre-wrap',
+              fontFamily: 'var(--mono)',
+              lineHeight: 1.8, overflowX: 'auto',
+            }}>
+              {output}
+            </pre>
+          ) : (
+            <div
+              style={{
+                background: '#03030c',
+                border: '1px solid var(--border)',
+                borderRadius: 10,
+                padding: '1rem',
+                fontSize: 13,
+                color: 'var(--text-1)',
+                lineHeight: 1.8,
+                overflowX: 'auto',
+              }}
+              dangerouslySetInnerHTML={{ __html: marked(output) }}
+            />
+          )}
         </div>
       )}
     </div>
