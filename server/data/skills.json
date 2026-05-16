@@ -148,5 +148,20 @@
     "last_updated": "2026-05-15",
     "example_input": "I need a database for a food delivery app. Users can place orders containing multiple items from restaurants. Each restaurant has a menu. Riders deliver orders.",
     "skill_md": "---\nname: database-schema-designer\ndescription: Converts plain English data descriptions into clean, normalized database schemas\nauthor: BobSkills Community\nversion: 1.0.0\n---\n\nDesign a database schema for the described system:\n\n- Identify all entities and their attributes\n- Define relationships: one-to-one, one-to-many, many-to-many\n- Choose appropriate field types for each column\n- Apply normalization (avoid redundancy)\n- Suggest indexes for performance-critical fields\n- Output as SQL CREATE TABLE statements or Mongoose schemas depending on DB choice\n- Include an entity relationship summary in plain English\n\n<Steps>\n  <Step>Extract all entities from the description</Step>\n  <Step>Define attributes and data types for each entity</Step>\n  <Step>Map relationships and foreign keys</Step>\n  <Step>Normalize to at least 3NF where applicable</Step>\n  <Step>Suggest indexes on frequently queried fields</Step>\n  <Step>Output schema in the requested format with ER summary</Step>\n</Steps>"
+  },
+  {
+    "id": "js-to-typescript",
+    "name": "JavaScript to TypeScript Converter",
+    "category": "Refactor",
+    "description": "A comprehensive skill for converting JavaScript code to fully typed TypeScript with proper type annotations, interfaces, and type safety.",
+    "rating": 4.8,
+    "installs": 445,
+    "tags": ["typescript", "javascript", "conversion", "types", "migration", "type-safety", "refactoring"],
+    "compatible_with": ["JavaScript", "TypeScript"],
+    "version": "1.0.0",
+    "author": "BobSkills Community",
+    "last_updated": "2026-05-16",
+    "example_input": "function calculateTotal(items) {\n  return items.reduce((sum, item) => sum + item.price, 0);\n}",
+    "skill_md": "---\nname: js-to-typescript\ndescription: Converts JavaScript code to fully typed TypeScript with proper type annotations, interfaces, and type safety\nauthor: BobSkills Community\nversion: 1.0.0\n---\n\nConvert the provided JavaScript code to TypeScript:\n\n- Rename files from .js to .ts (or .tsx for JSX/React)\n- Add type annotations to all function parameters and return types\n- Create interfaces for object shapes and complex data structures\n- Use generics for reusable, type-safe functions and classes\n- Replace any with proper types, unknown, or generics\n- Add access modifiers (public, private, protected) to class members\n- Install @types packages for third-party dependencies\n- Ensure strict mode compliance with no implicit any\n\n<Steps>\n  <Step>Analyze the JavaScript code structure and identify functions, classes, and data patterns</Step>\n  <Step>Rename file extensions and update import statements</Step>\n  <Step>Add type annotations to function parameters and return types</Step>\n  <Step>Define interfaces and type aliases for data structures</Step>\n  <Step>Convert classes with proper typing and access modifiers</Step>\n  <Step>Implement generics where applicable for type safety</Step>\n  <Step>Install type definitions for external dependencies</Step>\n  <Step>Run TypeScript compiler and fix all type errors</Step>\n  <Step>Verify strict mode passes without errors</Step>\n</Steps>"
   }
 ]

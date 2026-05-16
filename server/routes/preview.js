@@ -33,68 +33,44 @@ async function getIAMToken(apiKey) {
 
 // Helper function to call watsonx.ai text generation API
 async function generateText(accessToken, watsonxUrl, projectId, skillMd, code) {
-  // Try multiple models in order of preference
-  const models = [
-    'ibm/granite-4-h-small',
-    'ibm/granite-13b-chat-v2',
-    'ibm/granite-13b-instruct-v2',
-    'meta-llama/llama-2-70b-chat',
-    'google/flan-ul2',
-    'bigscience/mt0-xxl'
-  ];
-
-  let lastError = null;
-
-  for (const modelId of models) {
-    try {
-      console.log(`Trying model: ${modelId}`);
-      const response = await axios.post(
-        `${watsonxUrl}/ml/v1/text/generation?version=2023-05-29`,
-        {
-          model_id: modelId,
-          input: `System: ${skillMd}\n\nUser: ${code}\n\nAssistant:`,
-          parameters: {
-            max_new_tokens: 1000,
-            temperature: 0.7,
-            decoding_method: 'greedy',
-            repetition_penalty: 1.0
-          },
-          project_id: projectId
+  const modelId = 'ibm/granite-4-h-small';
+  
+  try {
+    console.log(`Using model: ${modelId}`);
+    const response = await axios.post(
+      `${watsonxUrl}/ml/v1/text/generation?version=2023-05-29`,
+      {
+        model_id: modelId,
+        input: `System: ${skillMd}\n\nUser: ${code}\n\nAssistant:`,
+        parameters: {
+          max_new_tokens: 1000,
+          temperature: 0.7,
+          decoding_method: 'greedy',
+          repetition_penalty: 1.0
         },
-        {
-          headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          }
+        project_id: projectId
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
         }
-      );
-      console.log(`✅ Success with model: ${modelId}`);
-      return response.data.results[0].generated_text;
-    } catch (error) {
-      console.log(`❌ Model ${modelId} failed:`, error.response?.status);
-      lastError = error;
-      // If it's a 404, try next model. If it's another error, throw immediately
-      if (error.response?.status !== 404) {
-        console.error('watsonx.ai error details:', {
-          model: modelId,
-          status: error.response?.status,
-          statusText: error.response?.statusText,
-          data: error.response?.data,
-          message: error.message
-        });
-        const errorMsg = error.response?.data?.error || error.response?.data?.message || error.message;
-        throw new Error(`watsonx.ai error with ${modelId}: ${errorMsg}`);
       }
-    }
+    );
+    console.log(`✅ Success with model: ${modelId}`);
+    return response.data.results[0].generated_text;
+  } catch (error) {
+    console.error('watsonx.ai error details:', {
+      model: modelId,
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      data: error.response?.data,
+      message: error.message
+    });
+    const errorMsg = error.response?.data?.error || error.response?.data?.message || error.message;
+    throw new Error(`watsonx.ai error with ${modelId}: ${errorMsg}`);
   }
-
-  // If all models failed with 404
-  console.error('All models failed. Last error:', {
-    status: lastError?.response?.status,
-    data: lastError?.response?.data
-  });
-  throw new Error('No available models found in your watsonx.ai instance. Please check your project has models deployed.');
 }
 
 router.post('/', async (req, res) => {
