@@ -217,7 +217,7 @@ export default function App() {
           marginBottom: 20,
           animationDelay: '0.07s',
         }}>
-          The missing layer
+          The App Store
           <br />
           <span style={{
             background: 'linear-gradient(128deg, var(--accent) 0%, var(--accent-2) 55%, var(--accent-3) 100%)',
@@ -225,7 +225,7 @@ export default function App() {
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
           }}>
-            for IBM Bob.
+            for Bob Skills.
           </span>
         </h1>
 
