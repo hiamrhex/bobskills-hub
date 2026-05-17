@@ -13,9 +13,11 @@ const CAT_COLOR = {
 
 const TABS = ['Overview', 'SKILL.md', 'Preview', 'Install'];
 
-export default function SkillModal({ skill, onClose }) {
+export default function SkillModal({ skill, onClose, previewCode, setPreviewCode, previewOutput, setPreviewOutput }) {
   const [tab, setTab] = useState('Overview');
-  const [code, setCode] = useState(skill.example_input || '');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [viewMode, setViewMode] = useState('raw');
   const color = CAT_COLOR[skill.category] || '#818cf8';
 
   useEffect(() => {
@@ -201,7 +203,19 @@ export default function SkillModal({ skill, onClose }) {
 
           {tab === 'Preview' && (
             <div style={{ animation: 'fadeUp 0.3s cubic-bezier(0.16,1,0.3,1) both' }}>
-              <BobPreview skill={skill} code={code} setCode={setCode} />
+              <BobPreview
+                skill={skill}
+                code={previewCode}
+                setCode={setPreviewCode}
+                output={previewOutput}
+                setOutput={setPreviewOutput}
+                loading={loading}
+                setLoading={setLoading}
+                error={error}
+                setError={setError}
+                viewMode={viewMode}
+                setViewMode={setViewMode}
+              />
             </div>
           )}
 

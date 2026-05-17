@@ -7,6 +7,10 @@
 [![Built with React](https://img.shields.io/badge/Built%20with-React-61DAFB?style=flat-square&logo=react)](https://reactjs.org/)
 [![Powered by watsonx.ai](https://img.shields.io/badge/Powered%20by-watsonx.ai-0F62FE?style=flat-square)](https://www.ibm.com/watsonx)
 
+**🌐 Live Demo:** [https://bobskills-hub.vercel.app](https://bobskills-hub.vercel.app) *(placeholder - update with actual URL)*
+
+**📦 GitHub Repository:** [https://github.com/hiamrhex/bobskills-hub](https://github.com/hiamrhex/bobskills-hub)
+
 ---
 
 ## 📖 Overview
@@ -28,80 +32,123 @@ Stop writing prompts from scratch — find the skill, ship the feature.
 ### 🎨 Modern UI/UX
 - **Glassmorphic Design** with smooth animations and scroll reveals
 - **Responsive Layout** optimized for desktop and mobile
-- **Theme Toggle** between dark and light modes
-- **Ambient Gradients** for visual depth
+- **Theme Toggle** between dark and light modes with persistent preferences
+- **Ambient Gradients** for visual depth and modern aesthetics
+- **Typewriter Animation** for live preview output (10ms per character)
 
 ### 🔍 Smart Discovery
 - **Real-time Search** across skill names and descriptions
 - **Category Filtering** (All, Testing, Docs, Security, Onboarding, Refactor)
 - **Skill Cards** with ratings, install counts, and compatibility info
 - **Detailed Modal Views** with full skill documentation
+- **Scroll Reveal Animations** for engaging user experience
 
 ### ⚡ Live Preview with watsonx.ai
 - **Interactive Testing** — paste your code and see the skill in action
 - **IBM Granite 3 Model** (`ibm/granite-3-3-8b-instruct`) for accurate results
-- **Real-time Generation** with streaming-like experience
-- **Example Inputs** provided for each skill
+- **Streaming-like Experience** with character-by-character reveal
+- **Raw & Rendered Views** — toggle between markdown and plain text
+- **Error Handling** with clear, actionable feedback
 
 ### 📦 Easy Installation
 - **Copy-Paste Commands** for instant skill installation
 - **Version Information** and compatibility details
 - **Author Attribution** and last updated timestamps
+- **Installation Instructions** directly in the modal
+
+---
+
+## 🎬 Screenshots
+
+### Homepage - Dark Mode
+*Glassmorphic hero section with ambient gradients and smooth animations*
+
+### Skill Grid - Light Mode
+*Browse curated skills with real-time search and category filtering*
+
+### Live Preview Modal
+*Test skills with watsonx.ai integration before installing*
+
+### Typewriter Animation
+*Character-by-character output reveal for streaming-like experience*
 
 ---
 
 ## 🛠️ Tech Stack
 
 ### Frontend
-- **React 18** — Modern UI library
-- **Vite** — Lightning-fast build tool
+- **React 18** — Modern UI library with hooks
+- **Vite** — Lightning-fast build tool and dev server
 - **Axios** — HTTP client for API calls
+- **Marked** — Markdown parser for rendered output
 - **CSS Variables** — Dynamic theming system
-- **Custom Hooks** — `useScrollReveal` for animations
+- **Custom Hooks** — `useScrollReveal` for scroll animations
 
 ### Backend
-- **Node.js** — JavaScript runtime
-- **Express** — Web framework
+- **Node.js 18+** — JavaScript runtime
+- **Express** — Minimal web framework
 - **Axios** — HTTP client for watsonx.ai integration
 - **CORS** — Cross-origin resource sharing
+- **Nodemon** — Auto-restart during development
 
 ### AI Integration
-- **IBM watsonx.ai** — AI model inference
-- **IBM Cloud IAM** — Authentication
+- **IBM watsonx.ai** — AI model inference platform
+- **IBM Cloud IAM** — Authentication and authorization
 - **Granite 3 Model** — Text generation (`ibm/granite-3-3-8b-instruct`)
+
+### Development Tools
+- **ESLint** — Code linting
+- **Git** — Version control
+- **VS Code** — Recommended IDE
 
 ---
 
-## 📦 Installation
+## 🚀 How to Run Locally
+
+Follow these step-by-step instructions to get BobSkills Hub running on your local machine.
 
 ### Prerequisites
-- **Node.js** 18+ and npm
-- **IBM Cloud Account** with watsonx.ai access
-- **watsonx.ai API Key** and Project ID
 
-### 1. Clone the Repository
+Before you begin, ensure you have the following installed:
+
+- **Node.js** 18 or higher ([Download](https://nodejs.org/))
+- **npm** (comes with Node.js)
+- **Git** ([Download](https://git-scm.com/))
+- **IBM Cloud Account** with watsonx.ai access ([Sign up](https://cloud.ibm.com/))
+
+### Step 1: Clone the Repository
+
 ```bash
 git clone https://github.com/hiamrhex/bobskills-hub.git
 cd bobskills-hub
 ```
 
-### 2. Install Dependencies
+### Step 2: Install Dependencies
 
-#### Server
+Install dependencies for both the server and client:
+
+#### Server Dependencies
 ```bash
 cd server
 npm install
 ```
 
-#### Client
+#### Client Dependencies
 ```bash
 cd ../client
 npm install
 ```
 
-### 3. Configure Environment Variables
+### Step 3: Configure Environment Variables
 
-Create a `.env` file in the `server/` directory:
+Create a `.env` file in the `server/` directory with your IBM watsonx.ai credentials:
+
+```bash
+cd ../server
+cp .env.example .env
+```
+
+Edit the `.env` file and add your credentials:
 
 ```env
 WATSONX_API_KEY=your_watsonx_api_key_here
@@ -109,58 +156,126 @@ WATSONX_PROJECT_ID=your_project_id_here
 WATSONX_URL=https://us-south.ml.cloud.ibm.com
 ```
 
-**How to get these values:**
+See the [Environment Variables](#-environment-variables) section below for detailed instructions on obtaining these values.
 
-1. **WATSONX_API_KEY**: 
-   - Go to [IBM Cloud](https://cloud.ibm.com/)
-   - Navigate to **Manage** → **Access (IAM)** → **API keys**
-   - Create a new API key or use an existing one
+### Step 4: Start the Development Servers
 
-2. **WATSONX_PROJECT_ID**:
-   - Go to [watsonx.ai](https://dataplatform.cloud.ibm.com/wx/home)
-   - Open your project
-   - Copy the Project ID from the project settings
-
-3. **WATSONX_URL**:
-   - Use the regional endpoint for your watsonx.ai instance
-   - Default: `https://us-south.ml.cloud.ibm.com`
-   - Other regions: `https://eu-de.ml.cloud.ibm.com`, `https://jp-tok.ml.cloud.ibm.com`
-
----
-
-## 🚀 Running Locally
-
-### Development Mode
-
-Open **two terminal windows**:
+Open **two terminal windows** and run the following commands:
 
 #### Terminal 1: Start the Backend Server
 ```bash
 cd server
 npm run dev
 ```
-Server runs on `http://localhost:3001`
+
+The server will start on `http://localhost:3001`
 
 #### Terminal 2: Start the Frontend Client
 ```bash
 cd client
 npm run dev
 ```
-Client runs on `http://localhost:5173`
 
-### Production Build
+The client will start on `http://localhost:5173`
 
-#### Build the Client
-```bash
-cd client
-npm run build
+### Step 5: Open in Browser
+
+Navigate to `http://localhost:5173` in your web browser to see BobSkills Hub in action!
+
+---
+
+## 🔐 Environment Variables
+
+The following environment variables are required for the backend server:
+
+### Server Environment Variables (`server/.env`)
+
+| Variable | Description | Required | Example |
+|----------|-------------|----------|---------|
+| `WATSONX_API_KEY` | Your IBM Cloud API key for watsonx.ai authentication | ✅ Yes | `abc123...xyz789` |
+| `WATSONX_PROJECT_ID` | Your watsonx.ai project ID | ✅ Yes | `12345678-abcd-1234-efgh-123456789012` |
+| `WATSONX_URL` | Regional endpoint for your watsonx.ai instance | ✅ Yes | `https://us-south.ml.cloud.ibm.com` |
+
+### How to Obtain These Values
+
+#### 1. WATSONX_API_KEY
+
+1. Go to [IBM Cloud](https://cloud.ibm.com/)
+2. Log in to your account
+3. Navigate to **Manage** → **Access (IAM)** → **API keys**
+4. Click **Create** to generate a new API key
+5. Copy the API key and save it securely (you won't be able to see it again)
+6. Paste it into your `.env` file
+
+#### 2. WATSONX_PROJECT_ID
+
+1. Go to [watsonx.ai](https://dataplatform.cloud.ibm.com/wx/home)
+2. Log in to your IBM Cloud account
+3. Open your watsonx.ai project (or create a new one)
+4. Click on the **Manage** tab
+5. Find the **Project ID** in the project details
+6. Copy the Project ID and paste it into your `.env` file
+
+#### 3. WATSONX_URL
+
+Use the regional endpoint that corresponds to your watsonx.ai instance location:
+
+- **US South:** `https://us-south.ml.cloud.ibm.com` (default)
+- **EU Germany:** `https://eu-de.ml.cloud.ibm.com`
+- **Japan Tokyo:** `https://jp-tok.ml.cloud.ibm.com`
+
+### Client Environment Variables (Optional)
+
+If you need to customize the API URL for the client:
+
+Create a `.env` file in the `client/` directory:
+
+```env
+VITE_API_URL=http://localhost:3001
 ```
 
-#### Start the Server
-```bash
-cd server
-npm start
-```
+This is optional — the client defaults to `http://localhost:3001` in development.
+
+---
+
+## 📊 Bob Sessions
+
+BobSkills Hub was built entirely using IBM Bob, and this repository includes exported Bob session reports that document the development process.
+
+### What are Bob Sessions?
+
+Bob sessions are exported reports that capture the entire conversation and development workflow between the developer and IBM Bob. These sessions provide:
+
+- **Complete Development History** — Every prompt, response, and code change
+- **Problem-Solving Process** — How challenges were identified and resolved
+- **Best Practices** — Patterns and techniques used throughout development
+- **Learning Resource** — Educational material for other developers
+
+### Session Reports in This Repository
+
+The `.bob/` directory contains:
+
+- **Skill Definitions** — Custom Bob skills created for this project
+- **Session Exports** — Markdown files documenting development sessions
+- **Configuration Files** — Bob configuration and settings
+
+### How to Use Bob Sessions
+
+1. **Review Development Process** — See how features were built step-by-step
+2. **Learn Bob Techniques** — Understand effective prompting strategies
+3. **Reproduce Results** — Follow the same workflow for similar projects
+4. **Contribute Skills** — Use existing skills as templates for new ones
+
+### Example: js-to-typescript Skill
+
+Located in `.bob/skills/js-to-typescript/`, this skill demonstrates:
+
+- Converting JavaScript code to TypeScript
+- Adding proper type annotations
+- Ensuring type safety
+- Following TypeScript best practices
+
+This skill was used during development and is available for reuse in other projects.
 
 ---
 
@@ -198,8 +313,15 @@ bobskills-hub/
 │   ├── package.json
 │   └── .env                # Environment variables (not in git)
 │
+├── .bob/                   # Bob sessions and skills
+│   └── skills/
+│       └── js-to-typescript/
+│           └── SKILL.md    # TypeScript conversion skill
+│
 ├── .gitignore
-└── README.md
+├── LICENSE
+├── README.md
+└── SETUP_GUIDE.md          # Detailed setup instructions
 ```
 
 ---
@@ -244,6 +366,7 @@ Generate live preview using watsonx.ai.
 **Request Body:**
 ```json
 {
+  "skillId": "unit-test-generator",
   "skillMd": "---\nname: unit-test-generator\n...",
   "code": "function calculateDiscount(price, userTier) {...}"
 }
@@ -253,6 +376,13 @@ Generate live preview using watsonx.ai.
 ```json
 {
   "output": "Generated test cases:\n\ndescribe('calculateDiscount', () => {\n  test('applies 20% discount for premium users', () => {\n    expect(calculateDiscount(100, 'premium')).toBe(80);\n  });\n  ...\n});"
+}
+```
+
+**Error Response:**
+```json
+{
+  "error": "Failed to generate preview. Please check your input and try again."
 }
 ```
 
@@ -272,7 +402,7 @@ Generate live preview using watsonx.ai.
   - **Model**: `ibm/granite-3-3-8b-instruct`
   - **Input**: Skill markdown + your code
   - **Parameters**: `max_new_tokens: 1000`, `temperature: 0.7`
-- Results stream back to the frontend
+- Results stream back with typewriter animation (10ms per character)
 
 ### 3. Install Skills
 - Copy the install command from the modal
@@ -337,6 +467,26 @@ Contributions are welcome! Here's how you can help:
 
 ---
 
+## 🏆 Hackathon Submission
+
+This project was built for the **IBM Bob Hackathon 2026** and demonstrates:
+
+- **Innovation** — First centralized marketplace for Bob Skills
+- **Technical Excellence** — Modern tech stack with watsonx.ai integration
+- **User Experience** — Polished UI with smooth animations and interactions
+- **Practical Value** — Solves real developer pain points
+- **Scalability** — Extensible architecture for future growth
+
+### Key Achievements
+
+- ✅ **Live Preview Integration** — Real-time skill testing with watsonx.ai
+- ✅ **Typewriter Animation** — Streaming-like experience for better UX
+- ✅ **Theme Support** — Dark/light mode with persistent preferences
+- ✅ **Responsive Design** — Works seamlessly on all devices
+- ✅ **Production Ready** — Clean code, error handling, and documentation
+
+---
+
 ## 📝 License
 
 This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
@@ -349,6 +499,7 @@ This project is licensed under the **MIT License** — see the [LICENSE](LICENSE
 - **IBM watsonx.ai** — For powering the live preview feature
 - **IBM Cloud** — For hosting and infrastructure
 - **Hackathon Organizers** — For the opportunity to build this
+- **Open Source Community** — For the amazing tools and libraries
 
 ---
 
@@ -358,11 +509,12 @@ Built with ❤️ for the **IBM Bob Hackathon 2026**
 
 - **GitHub**: [@hiamrhex](https://github.com/hiamrhex)
 - **Project**: [BobSkills Hub](https://github.com/hiamrhex/bobskills-hub)
+- **Demo**: [https://bobskills-hub.vercel.app](https://bobskills-hub.vercel.app) *(update with actual URL)*
 
 ---
 
 <div align="center">
   <strong>Stop writing prompts from scratch — find the skill, ship the feature.</strong>
   <br><br>
-  <sub>Made with Bob 🤖</sub>
+  <sub>Made with Bob 🤖 | Powered by watsonx.ai 🚀</sub>
 </div>

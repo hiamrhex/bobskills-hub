@@ -7,11 +7,11 @@ import SkillModal from './components/SkillModal';
 import { GithubIcon, SunIcon, MoonIcon, GridIcon } from './components/Icons';
 import { useScrollReveal } from './hooks/useScrollReveal';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+const API_URL = import.meta.env.VITE_API_URL || '';
 const CATEGORIES = ['All', 'Testing', 'Docs', 'Security', 'Onboarding', 'Refactor'];
 
 const STATS = [
-  { value: '8+',   label: 'Curated Skills'  },
+  { value: '11+',  label: 'Curated Skills'  },
   { value: '100%', label: 'Bob Native'       },
   { value: '48h',  label: 'Hackathon Built'  },
 ];
@@ -23,6 +23,8 @@ export default function App() {
   const [selected, setSelected] = useState(null);
   const [theme, setTheme]       = useState('dark');
   const [loading, setLoading]   = useState(true);
+  // Preview state per skill (persists across modal reopens)
+  const [previewStates, setPreviewStates] = useState({});
 
   const [heroRef,  heroVisible]  = useScrollReveal(0);
   const [statsRef, statsVisible] = useScrollReveal(100);
@@ -34,8 +36,9 @@ export default function App() {
 
   useEffect(() => {
     setLoading(true);
+    const url = API_URL ? `${API_URL}/api/skills` : '/api/skills';
     axios
-      .get(`${API_URL}/api/skills?search=${search}&category=${category}`)
+      .get(`${url}?search=${search}&category=${category}`)
       .then(r => { setSkills(r.data); setLoading(false); })
       .catch(() => setLoading(false));
   }, [search, category]);
@@ -341,7 +344,20 @@ export default function App() {
       </section>
 
       {selected && (
-        <SkillModal skill={selected} onClose={() => setSelected(null)} />
+        <SkillModal
+          skill={selected}
+          onClose={() => setSelected(null)}
+          previewCode={previewStates[selected.id]?.code ?? ''}
+          setPreviewCode={(code) => setPreviewStates(prev => ({
+            ...prev,
+            [selected.id]: { ...prev[selected.id], code }
+          }))}
+          previewOutput={previewStates[selected.id]?.output ?? ''}
+          setPreviewOutput={(output) => setPreviewStates(prev => ({
+            ...prev,
+            [selected.id]: { ...prev[selected.id], output }
+          }))}
+        />
       )}
     </div>
   );

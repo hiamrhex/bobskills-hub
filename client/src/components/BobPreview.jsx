@@ -1,23 +1,34 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { marked } from 'marked';
 import { BoltIcon, CopyIcon, CheckIcon } from './Icons';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+const API_URL = import.meta.env.VITE_API_URL || '';
 
-export default function BobPreview({ skill, code, setCode }) {
-  const [output, setOutput]   = useState('');
-  const [loading, setLoading] = useState(false);
-  const [copied, setCopied]   = useState(false);
-  const [error, setError]     = useState(null);
-  const [viewMode, setViewMode] = useState('raw'); // 'raw' or 'rendered'
+export default function BobPreview({
+  skill,
+  code,
+  setCode,
+  output,
+  setOutput,
+  loading,
+  setLoading,
+  error,
+  setError,
+  viewMode,
+  setViewMode
+}) {
+  const [copied, setCopied] = useState(false);
+  const [displayedOutput, setDisplayedOutput] = useState('');
+  const animationRef = useRef(null);
 
   const run = async () => {
     if (!code.trim()) return;
     setLoading(true);
     setOutput('');
+    setDisplayedOutput('');
     setError(null);
     try {
-      const res = await fetch(`${API_URL}/api/preview`, {
+      const res = await fetch(API_URL ? `${API_URL}/api/preview` : '/api/preview', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ skillId: skill.id, skillMd: skill.skill_md, code }),
@@ -29,6 +40,7 @@ export default function BobPreview({ skill, code, setCode }) {
         // Handle API errors
         setError(data.error || `Server error: ${res.status}`);
         setOutput('');
+        setDisplayedOutput('');
       } else {
         setOutput(data.output || 'No output returned.');
         setError(null);
@@ -36,9 +48,47 @@ export default function BobPreview({ skill, code, setCode }) {
     } catch (err) {
       setError('Failed to connect to server. Make sure the backend is running at ' + API_URL);
       setOutput('');
+      setDisplayedOutput('');
     }
     setLoading(false);
   };
+
+  // Typewriter animation effect
+  useEffect(() => {
+    // Clear any existing animation
+    if (animationRef.current) {
+      clearTimeout(animationRef.current);
+      animationRef.current = null;
+    }
+
+    // If there's no output, reset displayed output
+    if (!output) {
+      setDisplayedOutput('');
+      return;
+    }
+
+    // Start typewriter animation
+    let currentIndex = 0;
+    setDisplayedOutput('');
+
+    const typeNextCharacter = () => {
+      if (currentIndex < output.length) {
+        setDisplayedOutput(output.slice(0, currentIndex + 1));
+        currentIndex++;
+        animationRef.current = setTimeout(typeNextCharacter, 10);
+      }
+    };
+
+    typeNextCharacter();
+
+    // Cleanup function
+    return () => {
+      if (animationRef.current) {
+        clearTimeout(animationRef.current);
+        animationRef.current = null;
+      }
+    };
+  }, [output]);
 
   const copyOutput = () => {
     navigator.clipboard.writeText(output);
@@ -69,7 +119,7 @@ export default function BobPreview({ skill, code, setCode }) {
           fontFamily: 'var(--mono)',
           border: '1px solid var(--border)',
           borderRadius: 10,
-          background: '#03030c',
+          background: 'var(--bg-input)',
           color: 'var(--text-1)',
           resize: 'vertical', outline: 'none',
           lineHeight: 1.75,
@@ -91,9 +141,7 @@ export default function BobPreview({ skill, code, setCode }) {
         disabled={loading || !code.trim()}
         style={{
           width: '100%', marginTop: 10, padding: '0.85rem',
-          background: loading
-            ? 'var(--bg-surface)'
-            : 'linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%)',
+          background: 'linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%)',
           color: '#fff',
           border: '1px solid var(--border)',
           borderRadius: 10, fontSize: 13.5, fontWeight: 600,
@@ -156,7 +204,7 @@ export default function BobPreview({ skill, code, setCode }) {
       )}
 
       {/* Output */}
-      {output && (
+      {displayedOutput && (
         <div style={{ marginTop: '1rem', animation: 'fadeUp 0.4s cubic-bezier(0.16,1,0.3,1) both' }}>
           <div style={{
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
@@ -169,7 +217,7 @@ export default function BobPreview({ skill, code, setCode }) {
               {/* View Mode Toggle */}
               <div style={{
                 display: 'flex',
-                background: '#03030c',
+                background: 'var(--bg-input)',
                 border: '1px solid var(--border)',
                 borderRadius: 6,
                 padding: 2,
@@ -222,20 +270,20 @@ export default function BobPreview({ skill, code, setCode }) {
           </div>
           {viewMode === 'raw' ? (
             <pre style={{
-              background: '#03030c',
+              background: 'var(--bg-input)',
               border: '1px solid var(--border)',
               borderRadius: 10, padding: '1rem',
-              fontSize: 11.5, color: '#a5b4fc',
+              fontSize: 11.5, color: 'var(--text-2)',
               whiteSpace: 'pre-wrap',
               fontFamily: 'var(--mono)',
               lineHeight: 1.8, overflowX: 'auto',
             }}>
-              {output}
+              {displayedOutput}
             </pre>
           ) : (
             <div
               style={{
-                background: '#03030c',
+                background: 'var(--bg-input)',
                 border: '1px solid var(--border)',
                 borderRadius: 10,
                 padding: '1rem',
@@ -244,7 +292,7 @@ export default function BobPreview({ skill, code, setCode }) {
                 lineHeight: 1.8,
                 overflowX: 'auto',
               }}
-              dangerouslySetInnerHTML={{ __html: marked(output) }}
+              dangerouslySetInnerHTML={{ __html: marked(displayedOutput) }}
             />
           )}
         </div>
