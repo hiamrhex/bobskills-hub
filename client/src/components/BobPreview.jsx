@@ -60,27 +60,32 @@ export default function BobPreview({
 
   // Typewriter animation effect - only on first generation
   useEffect(() => {
-    // Clear any existing animation
-    if (animationRef.current) {
-      clearTimeout(animationRef.current);
-      animationRef.current = null;
-    }
-
     // If there's no output, reset displayed output
     if (!output) {
       setDisplayedOutput('');
+      // Clear any existing animation
+      if (animationRef.current) {
+        clearTimeout(animationRef.current);
+        animationRef.current = null;
+      }
       return;
     }
 
     // Check if this output has already been animated
     if (hasAnimatedRef.current.has(output)) {
-      // Output already exists in state - display instantly
+      // Output already exists in state - display instantly without animation
       setDisplayedOutput(output);
       return;
     }
 
-    // Mark this output as animated
+    // Mark this output as animated before starting animation
     hasAnimatedRef.current.add(output);
+
+    // Clear any existing animation
+    if (animationRef.current) {
+      clearTimeout(animationRef.current);
+      animationRef.current = null;
+    }
 
     // Start typewriter animation for new output
     let currentIndex = 0;

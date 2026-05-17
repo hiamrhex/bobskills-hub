@@ -30,29 +30,13 @@ function SkeletonCard({ minHeight }) {
 }
 
 export default function SkillGrid({ skills, loading, onSelect }) {
-  // Fisher-Yates shuffle algorithm
-  const shuffleArray = (array) => {
-    const shuffled = [...array];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-    return shuffled;
-  };
-
-  // Shuffle skills array on mount/change
-  const shuffledSkills = useMemo(() => {
-    if (!skills || skills.length === 0) return [];
-    return shuffleArray(skills);
-  }, [skills]);
-
-  // Generate consistent random heights for each skill based on their ID
+  // Generate consistent heights for each skill based on their ID
   const cardHeights = useMemo(() => {
-    if (!shuffledSkills || shuffledSkills.length === 0) return {};
+    if (!skills || skills.length === 0) return {};
     
     const heights = {};
-    shuffledSkills.forEach((skill) => {
-      // Use skill ID to generate a consistent "random" height
+    skills.forEach((skill) => {
+      // Use skill ID to generate a consistent height
       const hash = skill.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
       const minHeight = 280;
       const maxHeight = 380;
@@ -60,7 +44,7 @@ export default function SkillGrid({ skills, loading, onSelect }) {
       heights[skill.id] = minHeight + (hash % range);
     });
     return heights;
-  }, [shuffledSkills]);
+  }, [skills]);
 
   if (loading) {
     const skeletonHeights = [320, 350, 290, 360, 310, 340];
@@ -108,7 +92,7 @@ export default function SkillGrid({ skills, loading, onSelect }) {
       gridAutoRows: 'auto',
       gap: '14px',
     }}>
-      {shuffledSkills.map((s, i) => (
+      {skills.map((s, i) => (
         <SkillCard
           key={s.id}
           skill={s}
