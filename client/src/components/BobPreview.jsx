@@ -20,6 +20,7 @@ export default function BobPreview({
   const [copied, setCopied] = useState(false);
   const [displayedOutput, setDisplayedOutput] = useState('');
   const animationRef = useRef(null);
+  const hasAnimatedRef = useRef(new Set());
 
   const run = async () => {
     if (!code.trim()) return;
@@ -42,8 +43,11 @@ export default function BobPreview({
         setOutput('');
         setDisplayedOutput('');
       } else {
-        setOutput(data.output || 'No output returned.');
+        const newOutput = data.output || 'No output returned.';
+        setOutput(newOutput);
         setError(null);
+        // Mark this output as needing animation
+        hasAnimatedRef.current.delete(newOutput);
       }
     } catch (err) {
       setError('Failed to connect to server. Make sure the backend is running at ' + API_URL);
@@ -53,7 +57,7 @@ export default function BobPreview({
     setLoading(false);
   };
 
-  // Typewriter animation effect
+  // Typewriter animation effect - only on first generation
   useEffect(() => {
     // Clear any existing animation
     if (animationRef.current) {
@@ -67,7 +71,17 @@ export default function BobPreview({
       return;
     }
 
-    // Start typewriter animation
+    // Check if this output has already been animated
+    if (hasAnimatedRef.current.has(output)) {
+      // Output already exists in state - display instantly
+      setDisplayedOutput(output);
+      return;
+    }
+
+    // Mark this output as animated
+    hasAnimatedRef.current.add(output);
+
+    // Start typewriter animation for new output
     let currentIndex = 0;
     setDisplayedOutput('');
 
