@@ -36,9 +36,8 @@ export default function App() {
 
   useEffect(() => {
     setLoading(true);
-    const url = API_URL ? `${API_URL}/api/skills` : '/api/skills';
     axios
-      .get(`${url}?search=${search}&category=${category}`)
+      .get(`${import.meta.env.VITE_API_URL || ''}/api/skills?search=${search}&category=${category}`)
       .then(r => { setSkills(r.data); setLoading(false); })
       .catch(() => setLoading(false));
   }, [search, category]);
