@@ -20,8 +20,8 @@ if (missingEnvVars.length > 0) {
 // CORS configuration
 const corsOptions = {
   origin: process.env.NODE_ENV === 'production'
-    ? process.env.ALLOWED_ORIGINS?.split(',') || []
-    : ['http://localhost:5173', 'http://localhost:3000'],
+    ? process.env.ALLOWED_ORIGINS?.split(',') || ['https://bobskills-hub.vercel.app']
+    : ['http://localhost:5173', 'http://localhost:3000', 'https://bobskills-hub.vercel.app'],
   credentials: true,
   optionsSuccessStatus: 200
 };
