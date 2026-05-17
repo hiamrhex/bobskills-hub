@@ -21,11 +21,6 @@ async function getIAMToken(apiKey) {
     );
     return response.data.access_token;
   } catch (error) {
-    console.error('IAM token error details:', {
-      status: error.response?.status,
-      data: error.response?.data,
-      message: error.message
-    });
     const errorMsg = error.response?.data?.errorMessage || error.message;
     throw new Error(`IAM token error: ${errorMsg}`);
   }
@@ -33,10 +28,9 @@ async function getIAMToken(apiKey) {
 
 // Helper function to call watsonx.ai text generation API
 async function generateText(accessToken, watsonxUrl, projectId, skillMd, code) {
-  const modelId = 'ibm/granite-4-h-small';
+  const modelId = 'ibm/granite-3-8b-instruct';
   
   try {
-    console.log(`Using model: ${modelId}`);
     const response = await axios.post(
       `${watsonxUrl}/ml/v1/text/generation?version=2023-05-29`,
       {
@@ -58,18 +52,10 @@ async function generateText(accessToken, watsonxUrl, projectId, skillMd, code) {
         }
       }
     );
-    console.log(`✅ Success with model: ${modelId}`);
     return response.data.results[0].generated_text;
   } catch (error) {
-    console.error('watsonx.ai error details:', {
-      model: modelId,
-      status: error.response?.status,
-      statusText: error.response?.statusText,
-      data: error.response?.data,
-      message: error.message
-    });
     const errorMsg = error.response?.data?.error || error.response?.data?.message || error.message;
-    throw new Error(`watsonx.ai error with ${modelId}: ${errorMsg}`);
+    throw new Error(`watsonx.ai error: ${errorMsg}`);
   }
 }
 
@@ -95,6 +81,26 @@ router.post('/', async (req, res) => {
       });
     }
 
+    // Input validation
+    if (typeof skillMd !== 'string' || typeof code !== 'string') {
+      return res.status(400).json({
+        error: 'Invalid parameter types: skillMd and code must be strings'
+      });
+    }
+
+    // Length validation to prevent abuse
+    if (code.length > 50000) {
+      return res.status(400).json({
+        error: 'Code input too large. Maximum 50,000 characters allowed.'
+      });
+    }
+
+    if (skillMd.length > 100000) {
+      return res.status(400).json({
+        error: 'Skill markdown too large. Maximum 100,000 characters allowed.'
+      });
+    }
+
     // Step 1: Get IAM access token
     const accessToken = await getIAMToken(WATSONX_API_KEY);
 
@@ -111,8 +117,8 @@ router.post('/', async (req, res) => {
     res.json({ output: generatedText });
 
   } catch (error) {
-    console.error('Preview route error:', error.message);
-    res.status(500).json({
+    const statusCode = error.message.includes('IAM token') ? 401 : 500;
+    res.status(statusCode).json({
       error: error.message || 'An error occurred while generating preview'
     });
   }

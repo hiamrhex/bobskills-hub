@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { marked } from 'marked';
+import DOMPurify from 'dompurify';
 import { BoltIcon, CopyIcon, CheckIcon } from './Icons';
 
 const API_URL = import.meta.env.VITE_API_URL || '';
@@ -306,7 +307,7 @@ export default function BobPreview({
                 lineHeight: 1.8,
                 overflowX: 'auto',
               }}
-              dangerouslySetInnerHTML={{ __html: marked(displayedOutput) }}
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(marked(displayedOutput)) }}
             />
           )}
         </div>

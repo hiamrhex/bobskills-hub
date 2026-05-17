@@ -1,6 +1,7 @@
+import { useMemo } from 'react';
 import SkillCard from './SkillCard';
 
-function SkeletonCard() {
+function SkeletonCard({ minHeight }) {
   return (
     <div style={{
       background: 'var(--bg-card)',
@@ -8,6 +9,7 @@ function SkeletonCard() {
       borderRadius: 14,
       padding: '1.4rem 1.5rem',
       display: 'flex', flexDirection: 'column', gap: 12,
+      minHeight: minHeight || '280px',
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div className="skeleton" style={{ width: 64, height: 20 }} />
@@ -28,14 +30,50 @@ function SkeletonCard() {
 }
 
 export default function SkillGrid({ skills, loading, onSelect }) {
+  // Fisher-Yates shuffle algorithm
+  const shuffleArray = (array) => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
+  // Shuffle skills array on mount/change
+  const shuffledSkills = useMemo(() => {
+    if (!skills || skills.length === 0) return [];
+    return shuffleArray(skills);
+  }, [skills]);
+
+  // Generate consistent random heights for each skill based on their ID
+  const cardHeights = useMemo(() => {
+    if (!shuffledSkills || shuffledSkills.length === 0) return {};
+    
+    const heights = {};
+    shuffledSkills.forEach((skill) => {
+      // Use skill ID to generate a consistent "random" height
+      const hash = skill.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+      const minHeight = 280;
+      const maxHeight = 380;
+      const range = maxHeight - minHeight;
+      heights[skill.id] = minHeight + (hash % range);
+    });
+    return heights;
+  }, [shuffledSkills]);
+
   if (loading) {
+    const skeletonHeights = [320, 350, 290, 360, 310, 340];
     return (
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fill, minmax(310px, 1fr))',
+        gridAutoRows: 'auto',
         gap: '14px',
       }}>
-        {Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)}
+        {Array.from({ length: 6 }).map((_, i) => (
+          <SkeletonCard key={i} minHeight={`${skeletonHeights[i]}px`} />
+        ))}
       </div>
     );
   }
@@ -67,10 +105,17 @@ export default function SkillGrid({ skills, loading, onSelect }) {
     <div style={{
       display: 'grid',
       gridTemplateColumns: 'repeat(auto-fill, minmax(310px, 1fr))',
+      gridAutoRows: 'auto',
       gap: '14px',
     }}>
-      {skills.map((s, i) => (
-        <SkillCard key={s.id} skill={s} index={i} onClick={() => onSelect(s)} />
+      {shuffledSkills.map((s, i) => (
+        <SkillCard
+          key={s.id}
+          skill={s}
+          index={i}
+          onClick={() => onSelect(s)}
+          minHeight={cardHeights[s.id]}
+        />
       ))}
     </div>
   );

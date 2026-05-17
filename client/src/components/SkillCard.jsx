@@ -10,7 +10,7 @@ const CAT = {
   Refactor:   { color: 'var(--cat-refactor)', bg: 'rgba(96,165,250,0.07)'   },
 };
 
-export default function SkillCard({ skill, onClick, index = 0 }) {
+export default function SkillCard({ skill, onClick, index = 0, minHeight = 280 }) {
   const [hovered, setHovered] = useState(false);
   const [ref, visible] = useScrollReveal(index * 50);
   const cat = CAT[skill.category] || CAT.Docs;
@@ -34,7 +34,9 @@ export default function SkillCard({ skill, onClick, index = 0 }) {
         boxShadow: hovered ? 'var(--shadow-lift)' : 'var(--shadow-card)',
         transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
         transitionDelay: `${index * 0.025}s`,
-        display: 'flex', flexDirection: 'column',
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: `${minHeight}px`,
       }}
     >
       {/* Top accent line — animated opacity */}
